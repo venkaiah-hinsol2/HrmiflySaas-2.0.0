@@ -18,8 +18,14 @@ cmds = [
 
 [phases.build]
 cmds = [
-  "php artisan key:generate --force || true"
+  # Create .env file
+  "cp .env.example .env || true",
+  # Generate key
+  "php artisan key:generate --force || true",
+  # Link storage
+  "php artisan storage:link || true"
 ]
 
 [start]
 cmd = "php artisan serve --host=0.0.0.0 --port=80"
+
