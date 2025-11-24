@@ -34,10 +34,10 @@ services:
     container_name: hrms_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: Slate@HY2021
       MYSQL_DATABASE: hrmsdb
       MYSQL_USER: hrmsuser
-      MYSQL_PASSWORD: hrmspassword
+      MYSQL_PASSWORD: Slate@HY2021
     volumes:
       - db_data:/var/lib/mysql
     networks:
