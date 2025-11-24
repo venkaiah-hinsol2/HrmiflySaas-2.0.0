@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: hrms_app:latest
     container_name: hrms_app
     restart: unless-stopped
     working_dir: /var/www/html
@@ -23,11 +22,8 @@ services:
     ports:
       - "80:80"
     volumes:
+      - .:/var/www/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-
-    # ⭐ FIXED: create folder before mounting and start nginx
-    command: sh -c "mkdir -p /etc/nginx/conf.d && nginx -g 'daemon off;'"
-
     depends_on:
       - app
     networks:
