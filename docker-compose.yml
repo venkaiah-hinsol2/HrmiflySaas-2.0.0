@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   app:
     build:
@@ -15,7 +16,6 @@ services:
     networks:
       - hrms_net
 
-
   web:
     image: nginx:alpine
     container_name: hrms_web
@@ -29,7 +29,6 @@ services:
       - app
     networks:
       - hrms_net
-
 
   db:
     image: mariadb:10.6
