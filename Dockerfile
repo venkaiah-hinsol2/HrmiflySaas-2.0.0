@@ -14,12 +14,14 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    zip
+    libicu-dev \
+    g++ \
+    zip \
+ && rm -rf /var/lib/apt/lists/*
 
-# Configure GD
-RUN docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg
+# Configure GD and Intl
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-configure intl
 
 # Install PHP extensions
 RUN docker-php-ext-install \
