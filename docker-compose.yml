@@ -30,7 +30,7 @@ services:
       - hrms_net
 
   db:
-    image: mysql:8.0
+    image: mariadb:10.6
     container_name: hrms_db
     restart: unless-stopped
     environment:
