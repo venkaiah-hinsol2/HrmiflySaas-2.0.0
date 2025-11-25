@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libicu-dev \
     libonig-dev \
+    git \ 
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd
 
@@ -39,4 +40,3 @@ RUN chown -R www-data:www-data /var/www/html \
 EXPOSE 9000
 
 CMD ["php-fpm"]
-
