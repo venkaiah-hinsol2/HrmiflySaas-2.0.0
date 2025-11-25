@@ -1,42 +1,33 @@
 FROM php:8.2-fpm
 
-# Set working directory
-WORKDIR /var/www/html
-
-# Install system dependencies
+# System dependencies
 RUN apt-get update && apt-get install -y \
-    unzip \
-    libzip-dev \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    libicu-dev \
-    libonig-dev \
-    git \ 
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd
+    git zip unzip libzip-dev curl \
+    nodejs npm nginx \
+    && docker-php-ext-install pdo pdo_mysql zip
 
-# Install PHP extensions
-RUN docker-php-ext-install \
-    pdo_mysql \
-    zip \
-    intl \
-    exif \
-    bcmath
+# Set working directory
+WORKDIR /var/www
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy project files
+# Copy entire app
 COPY . .
 
-# Install PHP dependencies
+# Copy Nginx config from your nginx/default.conf
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Fix permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+# Install Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Folder permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+# Install Node deps and build assets
+RUN npm install
+RUN npm run build
+
+# Generate APP_KEY
+RUN php artisan key:generate --force
 
 EXPOSE 9000
-
 CMD ["php-fpm"]
