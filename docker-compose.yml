@@ -8,6 +8,8 @@ services:
     container_name: hrms_app
     restart: unless-stopped
     working_dir: /var/www/html
+    expose:
+      - "9000"   # php-fpm port
     volumes:
       - .:/var/www/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
@@ -47,4 +49,4 @@ networks:
 
 volumes:
   db_data:
-# 10:51
+# 11:03
