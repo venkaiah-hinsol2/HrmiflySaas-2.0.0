@@ -1,33 +1,41 @@
 FROM php:8.2-fpm
 
-# System dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git zip unzip libzip-dev curl \
-    nodejs npm nginx \
-    && docker-php-ext-install pdo pdo_mysql zip
+    git zip unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev curl nodejs npm && \
+    docker-php-ext-install pdo pdo_mysql zip bcmath
+
+# Configure GD extension
+RUN docker-php-ext-configure gd \
+    --with-jpeg=/usr/include \
+    --with-freetype=/usr/include && \
+    docker-php-ext-install gd
+
+# Install Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
-# Copy entire app
+# Copy application files
 COPY . .
 
-# Copy Nginx config from your nginx/default.conf
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+# Give permissions
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Fix permissions
-RUN chown -R www-data:www-data storage bootstrap/cache
-
-# Install Composer
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node deps and build assets
+# Install node dependencies & build assets
 RUN npm install
 RUN npm run build
 
-# Generate APP_KEY
-RUN php artisan key:generate --force
+# Laravel cache optimizations
+RUN php artisan config:clear
+RUN php artisan route:clear
+RUN php artisan view:clear
 
 EXPOSE 9000
+
 CMD ["php-fpm"]
+
