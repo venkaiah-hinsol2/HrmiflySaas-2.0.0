@@ -20,7 +20,7 @@ services:
     container_name: web
     restart: unless-stopped
     ports:
-      - "8081:80"
+      - "80"
     depends_on:
       - app
     networks:
@@ -46,3 +46,4 @@ networks:
 
 volumes:
   db_data:
+# 10:51
